@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  id             String   @id @default(cuid())
+  name           String
+  email          String   @unique
+  passwordHash   String
+  yearLevel      Int        // 100, 200, 300, 400, 500, 600
+  profilePicture String?    // URL; null means use initials placeholder
+  createdAt      DateTime @default(now())
+
+  courses   Course[]
+  sessions  Session[]
+  checkIns  DailyCheckIn[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model DailyCheckIn {
+  id         String   @id @default(cuid())
+  studentId  String
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date       String   // YYYY-MM-DD
+  reflection String?
+  createdAt  DateTime @default(now())
+
+  @@unique([studentId, date])
+}
+
+model Course {
+  id              String   @id @default(cuid())
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id])
+  title           String
+  courseCode      String     // e.g. MTH101, PHY202
+  summary         String
+  backgroundLevel String     // derived from student's yearLevel at creation
+  outline         String?    // optional pasted school outline
+  totalWeeks      Int
+  status          String   @default("active")
+  createdAt       DateTime @default(now())
+
+  weeks           Week[]
+  learningState   LearningState?
+  conceptMastery  ConceptMastery[]
+  tutorMessages   TutorMessage[]
+}
+
+model Week {
+  id           String   @id @default(cuid())
+  courseId     String
+  course       Course   @relation(fields: [courseId], references: [id])
+  weekNumber   Int
+  topic        String
+  keyConcepts  String
+  deliverables String
+  lecture      String?
+  problemSet   String?
+  solutionKey  String?
+  submissions  Submission[]
+
+  @@unique([courseId, weekNumber])
+}
+
+model Submission {
+  id        String    @id @default(cuid())
+  weekId    String
+  week      Week      @relation(fields: [weekId], references: [id])
+  content   String
+  score     Float?
+  maxScore  Float?
+  feedback  String?
+  gradedAt  DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model LearningState {
+  id               String   @id @default(cuid())
+  courseId         String   @unique
+  course           Course   @relation(fields: [courseId], references: [id])
+  currentWeek      Int      @default(1)
+  tutorAdjustments String   @default("")
+  updatedAt        DateTime @updatedAt
+}
+
+model ConceptMastery {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+  concept   String
+  status    String   @default("struggling")
+  score     Float    @default(0)
+  evidence  Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([courseId, concept])
+}
+
+model TutorMessage {
+  id         String   @id @default(cuid())
+  courseId   String
+  course     Course   @relation(fields: [courseId], references: [id])
+  weekNumber Int
+  role       String
+  content    String
+  createdAt  DateTime @default(now())
+}

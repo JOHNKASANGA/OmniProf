@@ -1,26 +1,346 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #fafbfd;
+    --bg-elevated: #ffffff;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --text-subtle: #94a3b8;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+
+    --accent-1: #3b82f6; /* electric blue */
+    --accent-2: #8b5cf6; /* violet */
+    --accent-cyan: #06b6d4;
+    --error: #dc2626;
+    --success: #16a34a;
+
+    --gradient-hero: linear-gradient(
+      135deg,
+      #06b6d4 0%,
+      #3b82f6 45%,
+      #8b5cf6 100%
+    );
+    --gradient-accent: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    --gradient-soft: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.08) 0%,
+      rgba(139, 92, 246, 0.08) 100%
+    );
+
+    --shadow-glow: 0 12px 32px -12px rgba(99, 102, 241, 0.35);
+    --shadow-soft: 0 4px 16px -8px rgba(15, 23, 42, 0.08);
+    --shadow-medium: 0 10px 28px -10px rgba(15, 23, 42, 0.14);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(
+        ellipse 1200px 600px at 15% -10%,
+        rgba(59, 130, 246, 0.12),
+        transparent 55%
+      ),
+      radial-gradient(
+        ellipse 900px 500px at 90% 15%,
+        rgba(139, 92, 246, 0.1),
+        transparent 55%
+      ),
+      radial-gradient(
+        ellipse 700px 400px at 50% 105%,
+        rgba(6, 182, 212, 0.08),
+        transparent 55%
+      );
+    background-attachment: fixed;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  textarea {
+    resize: vertical;
+    line-height: 1.55;
+  }
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--accent-1);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-subtle);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* ---- Buttons ---- */
+  .btn {
+    padding: 0.75rem 1.5rem;
+    background: var(--gradient-accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    box-shadow: var(--shadow-glow);
+    transition:
+      transform 0.12s ease,
+      box-shadow 0.18s ease,
+      opacity 0.15s ease;
+  }
+  .btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 36px -12px rgba(99, 102, 241, 0.5);
+  }
+  .btn:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .btn-ghost {
+    background: var(--bg-elevated);
+    color: var(--text);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    border-color: var(--border-strong);
+    background: var(--bg-elevated);
+    box-shadow: var(--shadow-medium);
+  }
+
+  /* ---- Cards ---- */
+  .card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: var(--shadow-soft);
+  }
+  .card-bubble {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-medium);
+  }
+
+  /* Course tile (used in landing scrollable strip) */
+  .tile {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.18s ease,
+      border-color 0.15s ease;
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .tile:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-medium);
+    border-color: var(--accent-1);
+  }
+
+  /* ---- Hero / greeting glow ("lightning" backdrop) ---- */
+  .glow-bg {
+    position: relative;
+    isolation: isolate;
+  }
+  .glow-bg::before {
+    content: "";
+    position: absolute;
+    inset: -30% -15%;
+    background:
+      radial-gradient(
+        circle at 25% 50%,
+        rgba(59, 130, 246, 0.3),
+        transparent 55%
+      ),
+      radial-gradient(
+        circle at 75% 40%,
+        rgba(139, 92, 246, 0.25),
+        transparent 55%
+      ),
+      radial-gradient(
+        circle at 50% 70%,
+        rgba(6, 182, 212, 0.18),
+        transparent 55%
+      );
+    filter: blur(40px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* ---- Text utilities ---- */
+  .text-gradient {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .section-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 0 1rem;
+  }
+
+  .label {
+    display: block;
+    font-size: 0.85rem;
+    margin-bottom: 0.45rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .font-display {
+    font-family: var(--font-display), system-ui, sans-serif;
+  }
+  .font-sans {
+    font-family: var(--font-sans), system-ui, sans-serif;
+  }
+
+  /* ---- Avatar (initials circle) ---- */
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--gradient-accent);
+    color: #fff;
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    box-shadow: var(--shadow-glow);
+    flex-shrink: 0;
+  }
+  .avatar-lg {
+    width: 96px;
+    height: 96px;
+    font-size: 2.1rem;
+  }
+
+  /* ---- Prose for lecture rendering ---- */
+  .prose {
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+    max-width: 70ch;
+  }
+  .prose h1 {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: 1.9rem;
+    margin: 2rem 0 1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .prose h2 {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: 1.5rem;
+    margin: 2rem 0 0.75rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .prose h3 {
+    font-size: 1.2rem;
+    margin: 1.5rem 0 0.5rem;
+    font-weight: 600;
+  }
+  .prose p {
+    margin: 1rem 0;
+  }
+  .prose ul,
+  .prose ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+  }
+  .prose li {
+    margin: 0.4rem 0;
+  }
+  .prose code {
+    font-family: ui-monospace, monospace;
+    font-size: 0.92em;
+    background: rgba(99, 102, 241, 0.1);
+    padding: 0.15em 0.4em;
+    border-radius: 6px;
+    color: var(--accent-2);
+  }
+  .prose pre {
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    padding: 1rem 1.25rem;
+    border-radius: 14px;
+    overflow-x: auto;
+    font-size: 0.9em;
+    line-height: 1.5;
+  }
+  .prose pre code {
+    background: none;
+    padding: 0;
+    color: var(--text);
+  }
+  .prose blockquote {
+    border-left: 3px solid var(--accent-1);
+    padding-left: 1.25rem;
+    margin: 1rem 0;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .mermaid-container {
+    margin: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+  }
+  .mermaid-error {
+    color: var(--error);
+    white-space: pre-wrap;
+  }
+  .katex {
+    font-size: 1em;
+  }
 }
