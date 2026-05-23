@@ -34,6 +34,14 @@ interface LectureData {
   weekNumber: number;
 }
 
+interface ResourceItem {
+  id: string;
+  title: string;
+  url: string;
+  sourceType: string;
+  description: string | null;
+}
+
 interface Problem {
   id?: string;
   prompt?: string;
@@ -79,6 +87,10 @@ export default function CoursePage() {
   const [loadingLecture, setLoadingLecture] = useState(false);
   const [generatingLecture, setGeneratingLecture] = useState(false);
 
+  const [resources, setResources] = useState<ResourceItem[]>([]);
+  const [loadingResources, setLoadingResources] = useState(false);
+  const [assemblingResources, setAssemblingResources] = useState(false);
+
   const [problemSet, setProblemSet] = useState<ProblemSet | null>(null);
   const [loadingProblems, setLoadingProblems] = useState(false);
   const [generatingProblems, setGeneratingProblems] = useState(false);
@@ -116,6 +128,17 @@ export default function CoursePage() {
         } else setError(d.error || "Failed to load course");
       });
   }, [student, courseId]);
+
+  useEffect(() => {
+    if (!course) return;
+    setLoadingResources(true);
+    fetch(`/api/resources/${courseId}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (Array.isArray(d.resources)) setResources(d.resources);
+      })
+      .finally(() => setLoadingResources(false));
+  }, [course, courseId]);
 
   useEffect(() => {
     if (!course) return;
@@ -173,6 +196,26 @@ export default function CoursePage() {
   useEffect(() => {
     tutorEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [tutorMessages, tab]);
+
+  async function refreshResources() {
+    setAssemblingResources(true);
+    setError(null);
+    try {
+      const r = await fetch(`/api/resources/${courseId}`, { method: "POST" });
+      const d = await r.json();
+      if (r.ok) {
+        const r2 = await fetch(`/api/resources/${courseId}`);
+        const d2 = await r2.json();
+        if (Array.isArray(d2.resources)) setResources(d2.resources);
+      } else {
+        setError(d.error || "Resource assembly failed");
+      }
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setAssemblingResources(false);
+    }
+  }
 
   async function generateLecture() {
     setGeneratingLecture(true);
@@ -443,6 +486,117 @@ export default function CoursePage() {
           </div>
         </div>
       )}
+      <div className="card-bubble" style={{ marginBottom: "2rem" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "1.25rem",
+            gap: "1rem",
+            flexWrap: "wrap",
+          }}
+        >
+          <h2 className="section-title" style={{ margin: 0 }}>
+            Resources
+          </h2>
+          <button
+            className="btn-ghost"
+            onClick={refreshResources}
+            disabled={assemblingResources}
+          >
+            {assemblingResources
+              ? "Searching…"
+              : resources.length === 0
+                ? "Find resources"
+                : "Refresh"}
+          </button>
+        </div>
+        {loadingResources && resources.length === 0 && (
+          <div style={{ color: "var(--text-muted)" }}>Loading…</div>
+        )}
+        {!loadingResources &&
+          resources.length === 0 &&
+          !assemblingResources && (
+            <div style={{ color: "var(--text-muted)" }}>
+              No resources yet. Click Find resources to gather open textbooks
+              and lecture notes for this course.
+            </div>
+          )}
+        {assemblingResources && (
+          <div style={{ color: "var(--text-muted)" }}>
+            Searching the web… ~15-30s.
+          </div>
+        )}
+        {resources.length > 0 && (
+          <div style={{ display: "grid", gap: "0.75rem" }}>
+            {resources.map((r) => (
+              <a
+                key={r.id}
+                href={r.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "block",
+                  padding: "0.85rem 1rem",
+                  background: SOFT_BG,
+                  borderRadius: "12px",
+                  color: "var(--text)",
+                  textDecoration: "none",
+                  border: "1px solid transparent",
+                  transition: "border-color 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--accent-1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "transparent";
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.6rem",
+                    marginBottom: "0.25rem",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "0.7rem",
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                      color: "var(--accent-1)",
+                      padding: "0.2rem 0.55rem",
+                      background: "rgba(59, 130, 246, 0.12)",
+                      borderRadius: "6px",
+                    }}
+                  >
+                    {r.sourceType}
+                  </span>
+                  <span style={{ fontWeight: 600, fontSize: "0.95rem" }}>
+                    {r.title}
+                  </span>
+                </div>
+                {r.description && (
+                  <div
+                    style={{
+                      color: "var(--text-muted)",
+                      fontSize: "0.85rem",
+                      marginTop: "0.35rem",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {r.description}
+                  </div>
+                )}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div
         style={{

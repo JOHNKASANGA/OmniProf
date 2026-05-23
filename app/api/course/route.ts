@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { storage } from "@/lib/storage";
+import { assembleResources } from "@/lib/resources/assemble";
 import { mapCurriculum } from "@/lib/modes/curriculum";
 import {
   YearLevelSchema,
@@ -79,6 +80,16 @@ export async function POST(req: NextRequest) {
     outline: parsed.outline,
     curriculum,
   });
+
+  // Fire-and-forget resource assembly so course creation returns fast
+  void assembleResources({
+    courseId: course.id,
+    courseCode: parsed.courseCode,
+    courseTitle: parsed.title,
+    topics: curriculum.weeks
+      .flatMap((w) => [w.topic, ...w.keyConcepts])
+      .slice(0, 12),
+  }).catch((err) => console.error("Background resource assembly failed:", err));
 
   return NextResponse.json(
     { courseId: course.id, course, curriculum },

@@ -8,7 +8,10 @@ import type {
   TutorMessageRecord,
   WeekContent,
   WeekContentWithKey,
+  ResourceRecord,
+  CreateResourceInput,
 } from "./adapter";
+
 import {
   type BackgroundLevel,
   type CourseStatus,
@@ -408,6 +411,63 @@ export const prismaStorage: StorageAdapter = {
       reflection: r.reflection,
       createdAt: r.createdAt,
     }));
+  },
+
+  async createResource(input: CreateResourceInput): Promise<ResourceRecord> {
+    const resource = await prismaClient.resource.upsert({
+      where: {
+        courseId_url: { courseId: input.courseId, url: input.url },
+      },
+      create: {
+        courseId: input.courseId,
+        title: input.title,
+        url: input.url,
+        sourceType: input.sourceType,
+        description: input.description ?? null,
+      },
+      update: {
+        title: input.title,
+        sourceType: input.sourceType,
+        description: input.description ?? null,
+      },
+    });
+    return {
+      id: resource.id,
+      courseId: resource.courseId,
+      title: resource.title,
+      url: resource.url,
+      sourceType: resource.sourceType,
+      description: resource.description,
+      createdAt: resource.createdAt,
+    };
+  },
+
+  async listResources(courseId: string): Promise<ResourceRecord[]> {
+    const resources = await prismaClient.resource.findMany({
+      where: { courseId },
+      orderBy: { createdAt: "asc" },
+    });
+    return resources.map((r) => ({
+      id: r.id,
+      courseId: r.courseId,
+      title: r.title,
+      url: r.url,
+      sourceType: r.sourceType,
+      description: r.description,
+      createdAt: r.createdAt,
+    }));
+  },
+
+  async deleteResource(resourceId: string, courseId: string): Promise<void> {
+    await prismaClient.resource.deleteMany({
+      where: { id: resourceId, courseId },
+    });
+  },
+
+  async clearResourcesForCourse(courseId: string): Promise<void> {
+    await prismaClient.resource.deleteMany({
+      where: { courseId },
+    });
   },
 };
 

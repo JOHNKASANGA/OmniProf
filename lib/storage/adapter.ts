@@ -50,6 +50,24 @@ export interface WeekContentWithKey extends WeekContent {
   solutionKey: SolutionKey | null;
 }
 
+export interface ResourceRecord {
+  id: string;
+  courseId: string;
+  title: string;
+  url: string;
+  sourceType: string;
+  description: string | null;
+  createdAt: Date;
+}
+
+export interface CreateResourceInput {
+  courseId: string;
+  title: string;
+  url: string;
+  sourceType: string;
+  description?: string | null;
+}
+
 export interface SubmissionRecord {
   id: string;
   weekId: string;
@@ -149,6 +167,12 @@ export interface StorageAdapter {
     feedback: GradedFeedback,
   ): Promise<void>;
   listSubmissions(weekId: string): Promise<SubmissionRecord[]>;
+
+  // Resources
+  createResource(input: CreateResourceInput): Promise<ResourceRecord>;
+  listResources(courseId: string): Promise<ResourceRecord[]>;
+  deleteResource(resourceId: string, courseId: string): Promise<void>;
+  clearResourcesForCourse(courseId: string): Promise<void>;
 
   // Learning state
   getLearningStateView(courseId: string): Promise<LearningStateView>;

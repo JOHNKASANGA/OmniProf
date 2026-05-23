@@ -53,7 +53,7 @@ model Course {
   totalWeeks      Int
   status          String   @default("active")
   createdAt       DateTime @default(now())
-
+  resources Resource[]
   weeks           Week[]
   learningState   LearningState?
   conceptMastery  ConceptMastery[]
@@ -118,4 +118,18 @@ model TutorMessage {
   role       String
   content    String
   createdAt  DateTime @default(now())
+}
+
+model Resource {
+  id          String   @id @default(cuid())
+  courseId    String
+  title       String
+  url         String
+  sourceType  String
+  description String?
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([courseId, url])
+  @@index([courseId])
 }

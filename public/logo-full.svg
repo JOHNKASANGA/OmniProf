@@ -1,0 +1,35 @@
+<svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" width="700" height="200">
+  <defs>
+    <linearGradient id="orbGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="50%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0EA5E9"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <radialGradient id="haloGradient2" cx="50%" cy="50%" r="50%">
+      <stop offset="55%" stop-color="#6366F1" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#6366F1" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow2" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <circle cx="100" cy="100" r="90" fill="url(#haloGradient2)"/>
+  <circle cx="100" cy="100" r="48" fill="url(#orbGradient2)" filter="url(#softGlow2)"/>
+  <path d="M 96 73 A 27 27 0 1 0 104 73"
+        fill="none" stroke="white" stroke-opacity="0.92"
+        stroke-width="3.5" stroke-linecap="round"/>
+
+  <text x="210" y="128"
+        font-family="Sora, 'Plus Jakarta Sans', system-ui, sans-serif"
+        font-size="76" font-weight="700" letter-spacing="-3"
+        fill="url(#textGradient)">omniprof</text>
+</svg>
