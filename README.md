@@ -1,36 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Overview
+The Digital Professor is an AI-driven educational platform designed to break down complex engineering and academic concepts into small, understandable chunks till u fully master the course with free resources sourced from the web and a tutor to help with each part. All you need in one interface.
 
-## Getting Started
+Features
+**Adaptive AI Tutoring: The Socratic tutor explains
+Interactive Concept Breakdowns: A full 14 week break down of concept designed to teach you everything u need to go.
+Seamless UI: A clean, visually appealing ui fo captivating learning. *** Resources provision:** Creates resources for
+Getting Started
+To run OmniProf locally on your machine, follow these steps:
 
-First, run the development server:
+Clone the repository: ```bash git clone https://github.com/JOHNKASANGA/omniprof.git
+Navigate to the project directory: bash cd omniprof
+3.** Install Dependencies ** bash npm install
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Run the Development server: bash npm run dev.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the app: Navigate to http://localhost:3000 in your browser. You can start editing the main page by modifying app/page.tsx. The page auto-updates as you edit the file.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+🌐 Deployment: OmniProf is deployed seamlessly using the Vercel Platform. For details on deploying Next.js apps, check out the Next.js deployment documentation.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🤝 Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
 
-## Learn More
+👨‍💻 Author JOHNKASANGA
 
-To learn more about Next.js, take a look at the following resources:
+GitHub: @JOHNKASANGA
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+📄 License This project is MIT licensed.
