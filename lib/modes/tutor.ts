@@ -3,7 +3,7 @@ import { storage } from "@/lib/storage";
 import { loadSafeContext } from "./router";
 import { TUTOR_SYSTEM_PROMPT, tutorContextBlock } from "@/lib/prompts/tutor";
 import type { LLMMessage } from "@/lib/llm";
-
+import { formatResourcesBlock } from "@/lib/prompts/resources";
 export interface TutorTurnResult {
   reply: string;
   weekNumber: number;
@@ -24,7 +24,7 @@ export async function respondToTutor(input: {
     input.weekNumber,
     input.historyLimit ?? 40,
   );
-
+  const resources = await storage.listResources(input.courseId);
   const messages: LLMMessage[] = [
     ...history.map((m) => ({
       role: (m.role === "student" ? "user" : "assistant") as
@@ -45,6 +45,7 @@ export async function respondToTutor(input: {
       backgroundLevel: ctx.course.backgroundLevel,
       state: ctx.state,
     });
+  +formatResourcesBlock(resources);
 
   const reply = await llm.generateText({
     system: systemPrompt,

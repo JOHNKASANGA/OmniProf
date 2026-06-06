@@ -1,6 +1,7 @@
 import { llm } from "@/lib/llm";
 import { storage } from "@/lib/storage";
 import { loadSafeContext } from "./router";
+import { formatResourcesBlock } from "@/lib/prompts/resources";
 import {
   LECTURE_SYSTEM_PROMPT,
   lectureUserMessage,
@@ -22,6 +23,7 @@ export async function generateLecture(input: {
     input.courseId,
     input.weekNumber,
   );
+  const resources = await storage.listResources(input.courseId);
 
   if (!ctx.course) {
     throw new Error(`Course ${input.courseId} not found`);

@@ -186,9 +186,9 @@ export default function CoursePage() {
         securityLevel: "loose",
       });
       setTimeout(() => {
-        try {
-          mermaid.run({ querySelector: ".mermaid" });
-        } catch {}
+        mermaid.run({ querySelector: ".mermaid" }).catch(() => {
+          // Mermaid sometimes fails on edge-case diagrams; ignore so the page keeps rendering.
+        });
       }, 50);
     }
   }, [lecture, tab]);
